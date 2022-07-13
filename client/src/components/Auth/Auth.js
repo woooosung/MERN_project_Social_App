@@ -4,7 +4,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input';
@@ -14,6 +14,7 @@ const Auth = () => {
     const [ showPassword, setShowPassword ] = useState(false);
     const [ isSignup, setIsSignup ] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleShowPassword = () => setShowPassword ((prevShowPassword) => !prevShowPassword);
 
@@ -31,11 +32,14 @@ const Auth = () => {
     };
 
     const googleSuccess = async (res) => {
-        var userObject = jwt_decode(res.credential);
-        const token = res.credential
+        var result = jwt_decode(res?.credential);
+        const token = res?.credential
 
         try {
-            dispatch({ type : 'AUTH', data : { userObject, token }})
+            dispatch({ type : 'AUTH', data : { result, token }});
+
+            navigate('/');
+            window.location.reload();
         } catch (error) {
             console.log(error);
         }
