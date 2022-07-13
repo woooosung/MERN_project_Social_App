@@ -1,12 +1,13 @@
 import React, {useState} from 'react'
 import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui/core';
-import { GoogleLogin } from 'react-google-login';
+import { GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import jwt_decode from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input';
-import Icon from './Icon';
 
 const Auth = () => {
     const classes = useStyles();
@@ -30,11 +31,11 @@ const Auth = () => {
     };
 
     const googleSuccess = async (res) => {
-        const result = res?.profileObj;
-        const token = res?.tokenId; 
+        var userObject = jwt_decode(res.credential);
+        const token = res.credential
 
         try {
-            dispatch({ type : 'AUTH', data : { result, token }})
+            dispatch({ type : 'AUTH', data : { userObject, token }})
         } catch (error) {
             console.log(error);
         }
@@ -69,19 +70,13 @@ const Auth = () => {
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                         {isSignup ? 'Sign Up' : 'Sign In'}
                     </Button>
-                    <GoogleLogin
-                        clientId="897459877281-ntp70p2o4unf4et3nuoi9gjdelbphnf9.apps.googleusercontent.com"
-                        scope="email"
-                        plugin_name="Memories App"
-                        render={(renderProps) => (
-                            <Button className={classes.googleButton} color="primary" fullWidth onClick={renderProps.onClick} disabled={renderProps.disabled} startIcon={<Icon />} variant="contained">
-                                Google Sign In
-                            </Button>
-                        )}
-                        onSuccess={googleSuccess}
-                        onFailure={googleFailure}
-                        cookiePolicy="single_host_origin"
-                    />
+                    <GoogleOAuthProvider clientId="897459877281-ntp70p2o4unf4et3nuoi9gjdelbphnf9.apps.googleusercontent.com">
+                        <GoogleLogin
+                            onSuccess={googleSuccess}
+                            onFailure={googleFailure}
+                            cookiePolicy="single_host_origin"
+                        />
+                    </GoogleOAuthProvider>
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Button onClick={switchMode}>
