@@ -29,7 +29,6 @@ const Navbar = () => {
     const logout = () => {
         dispatch({ type : LOGOUT});
 
-        navigate('/');
         window.location.reload();
         setUser(0);
     };
