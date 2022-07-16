@@ -9,6 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input';
 import { signin, signup } from '../../actions/auth';
+import { AUTH } from '../../constants/actionTypes';
 
 const initialState = { firstName : '', lastName : '', email : '', password : '', confirmPassword : ''};
 
@@ -20,7 +21,7 @@ const Auth = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleShowPassword = () => setShowPassword ((prevShowPassword) => !prevShowPassword);
+    const handleShowPassword = () => setShowPassword (!showPassword);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,7 +48,7 @@ const Auth = () => {
         const token = res?.credential
 
         try {
-            dispatch({ type : 'AUTH', data : { result, token }});
+            dispatch({ type : AUTH, data : { result, token }});
 
             navigate('/');
         } catch (error) {
@@ -89,7 +90,7 @@ const Auth = () => {
                             onSuccess={googleSuccess}
                             onFailure={googleFailure}
                             cookiePolicy="single_host_origin"
-                        />
+                        fullWidth/>
                     </GoogleOAuthProvider>
                     <Grid container justify="flex-end">
                         <Grid item>
